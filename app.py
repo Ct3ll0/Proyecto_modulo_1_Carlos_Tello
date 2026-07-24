@@ -34,8 +34,10 @@ def home():
  
     st.subheader("Descripción del proyecto")
     st.write(
-        "Breve descripción del proyecto: esta aplicación contiene 4 secciones donde se aplican conceptos fundamentales de estructura de datos,
-         control de flujo, funciones, programación funcional y programación orientada a objetos "
+        """
+        Breve descripción del proyecto: esta aplicación contiene 4 secciones donde se aplican conceptos fundamentales de estructura de datos,
+        control de flujo, funciones, programación funcional y programación orientada a objetos
+        """
     )
  
     st.markdown("---")
