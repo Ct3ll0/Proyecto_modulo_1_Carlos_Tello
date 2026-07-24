@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from libreria_funciones_proyecto1 import calcular_indicadores_mantenimiento, calcular_oee
 
 st.set_page_config(page_title="Proyecto 1 DMC", layout="wide")
 
