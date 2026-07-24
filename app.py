@@ -7,8 +7,7 @@ def home():
     col1, col2 = st.columns([1, 3])
  
     with col1:
-        # Reemplaza "logo.png" por el nombre de tu logo/imagen (debe estar en la misma carpeta)
-        # st.image("logo.png", width=150)
+        st.image("logodmc.png", width=150)
         pass
  
     with col2:
@@ -32,14 +31,14 @@ def home():
         
     st.markdown("---")
  
-    st.subheader("Descripción del Proyecto")
+    st.subheader("Descripción del proyecto")
     st.write(
         "Breve descripción del proyecto: esta aplicación contiene 4 secciones donde se aplican conceptos fundamentales de estructura de datos, control de flujo, funciones, programación funcional y programación orientada a objetos "
     )
  
     st.markdown("---")
  
-    st.subheader("Tecnologías Utilizadas")
+    st.subheader("Tecnologías utilizadas")
     st.markdown(
         """
         - Python
