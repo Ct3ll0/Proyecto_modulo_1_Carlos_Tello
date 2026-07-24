@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from libreria_funciones_proyecto1 import calcular_indicadores_mantenimiento, calcular_oee
+from libreria_clases_proyecto1 import EquipoMantenimiento
 
 st.set_page_config(page_title="Proyecto 1 DMC", layout="wide")
 
@@ -327,7 +328,175 @@ def ejercicio_3():
 
 def ejercicio_4():
     st.title("Ejercicio 4")
-    st.write("Contenido del Ejercicio 4.")
+ 
+    st.markdown(
+        """
+        ### Uso de clases desde una librería externa con CRUD
+        En esta sección se conecta la clase `EquipoMantenimiento` de `libreria_clases_proyecto1.py`
+        con Streamlit. Para cada equipo se calcula el **MTBF**, **MTTR** y **disponibilidad** a partir 
+        de sus horas de operación, número de fallas y horas de reparación.
+        """
+    )
+ 
+    st.markdown("---")
+ 
+    if "equipos" not in st.session_state:
+        st.session_state.equipos = []  # Lista de dicts
+    if "siguiente_id" not in st.session_state:
+        st.session_state.siguiente_id = 1
+ 
+    def registrar_equipo(nombre, horas_operacion, numero_fallas, horas_reparacion):
+        equipo = EquipoMantenimiento(nombre, horas_operacion, numero_fallas, horas_reparacion)
+        resumen = equipo.resumen()
+        return {
+            "id": st.session_state.siguiente_id,
+            "nombre_equipo": resumen["equipo"],
+            "horas_operacion": horas_operacion,
+            "numero_fallas": numero_fallas,
+            "horas_reparacion": horas_reparacion,
+            "mtbf_h": resumen["mtbf_h"],
+            "mttr_h": resumen["mttr_h"],
+            "disponibilidad_pct": resumen["disponibilidad_pct"],
+        }
+ 
+    tab_crear, tab_leer, tab_actualizar, tab_eliminar = st.tabs(
+        ["Crear", "Leer", "Actualizar", "Eliminar"]
+    )
+ 
+    # Crear
+    with tab_crear:
+        st.subheader("Registrar nuevo equipo")
+ 
+        col1, col2, col3, col4 = st.columns(4)
+ 
+        with col1:
+            nombre_c = st.text_input("Nombre del equipo", key="crear_nombre")
+        with col2:
+            horas_operacion_c = st.number_input(
+                "Horas de operación", min_value=0.0, step=1.0, format="%.2f", key="crear_operacion"
+            )
+        with col3:
+            numero_fallas_c = st.number_input(
+                "Número de fallas", min_value=0, step=1, key="crear_fallas"
+            )
+        with col4:
+            horas_reparacion_c = st.number_input(
+                "Horas de reparación", min_value=0.0, step=1.0, format="%.2f", key="crear_reparacion"
+            )
+ 
+        if st.button("Crear equipo"):
+            if nombre_c.strip() == "":
+                st.error("Debes ingresar el nombre del equipo.")
+            else:
+                try:
+                    nuevo = registrar_equipo(
+                        nombre_c, horas_operacion_c, numero_fallas_c, horas_reparacion_c
+                    )
+                    st.session_state.equipos.append(nuevo)
+                    st.session_state.siguiente_id += 1
+                    st.success(f"Equipo '{nombre_c}' creado correctamente.")
+                except ValueError as e:
+                    st.error(f"Error en los datos ingresados: {e}")
+ 
+    # Leer
+    with tab_leer:
+        st.subheader("Equipos registrados")
+ 
+        if len(st.session_state.equipos) == 0:
+            st.info("No hay equipos registrados.")
+        else:
+            df_equipos = pd.DataFrame(st.session_state.equipos)
+            st.dataframe(df_equipos, use_container_width=True)
+ 
+    # Actualizar
+    with tab_actualizar:
+        st.subheader("Actualizar equipo")
+ 
+        if len(st.session_state.equipos) == 0:
+            st.info("No hay equipos registrados.")
+        else:
+            opciones = {
+                f"{e['id']} - {e['nombre_equipo']}": e["id"] for e in st.session_state.equipos
+            }
+            seleccion = st.selectbox("Selecciona el equipo a actualizar", list(opciones.keys()))
+            id_seleccionado = opciones[seleccion]
+            equipo_actual = next(e for e in st.session_state.equipos if e["id"] == id_seleccionado)
+ 
+            col1, col2, col3, col4 = st.columns(4)
+ 
+            with col1:
+                nombre_u = st.text_input(
+                    "Nombre del equipo", value=equipo_actual["nombre_equipo"], key="act_nombre"
+                )
+            with col2:
+                horas_operacion_u = st.number_input(
+                    "Horas de operación",
+                    min_value=0.0,
+                    step=1.0,
+                    format="%.2f",
+                    value=float(equipo_actual["horas_operacion"]),
+                    key="act_operacion",
+                )
+            with col3:
+                numero_fallas_u = st.number_input(
+                    "Número de fallas",
+                    min_value=0,
+                    step=1,
+                    value=int(equipo_actual["numero_fallas"]),
+                    key="act_fallas",
+                )
+            with col4:
+                horas_reparacion_u = st.number_input(
+                    "Horas de reparación",
+                    min_value=0.0,
+                    step=1.0,
+                    format="%.2f",
+                    value=float(equipo_actual["horas_reparacion"]),
+                    key="act_reparacion",
+                )
+ 
+            if st.button("Actualizar equipo"):
+                if nombre_u.strip() == "":
+                    st.error("Debes ingresar el nombre del equipo.")
+                else:
+                    try:
+                        equipo = EquipoMantenimiento(
+                            nombre_u, horas_operacion_u, numero_fallas_u, horas_reparacion_u
+                        )
+                        resumen = equipo.resumen()
+ 
+                        equipo_actual["nombre_equipo"] = resumen["equipo"]
+                        equipo_actual["horas_operacion"] = horas_operacion_u
+                        equipo_actual["numero_fallas"] = numero_fallas_u
+                        equipo_actual["horas_reparacion"] = horas_reparacion_u
+                        equipo_actual["mtbf_h"] = resumen["mtbf_h"]
+                        equipo_actual["mttr_h"] = resumen["mttr_h"]
+                        equipo_actual["disponibilidad_pct"] = resumen["disponibilidad_pct"]
+ 
+                        st.success(f"Equipo '{nombre_u}' actualizado correctamente.")
+                    except ValueError as e:
+                        st.error(f"Error en los datos ingresados: {e}")
+ 
+    # Eliminar
+    with tab_eliminar:
+        st.subheader("Eliminar equipo")
+ 
+        if len(st.session_state.equipos) == 0:
+            st.info("No hay equipos registrados.")
+        else:
+            opciones_del = {
+                f"{e['id']} - {e['nombre_equipo']}": e["id"] for e in st.session_state.equipos
+            }
+            seleccion_del = st.selectbox(
+                "Selecciona el equipo a eliminar", list(opciones_del.keys()), key="del_select"
+            )
+            id_a_eliminar = opciones_del[seleccion_del]
+ 
+            if st.button("Eliminar equipo"):
+                st.session_state.equipos = [
+                    e for e in st.session_state.equipos if e["id"] != id_a_eliminar
+                ]
+                st.success("Equipo eliminado correctamente.")
 
 
 # Menú lateral
