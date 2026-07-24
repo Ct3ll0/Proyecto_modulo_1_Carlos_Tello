@@ -126,7 +126,80 @@ def ejercicio_1():
 
 def ejercicio_2():
     st.title("Ejercicio 2")
-    st.write("Contenido del Ejercicio 2.")
+ 
+    st.markdown(
+        """
+        ### Registro con NumPy, arrays y DataFrame
+        En esta sección se registran productos en arreglos de NumPy.
+        Se calcula el total y todos los registros se muestran en una tabla con Pandas.
+        """
+    )
+ 
+    st.markdown("---")
+ 
+    # Inicializar arrays
+    if "np_nombres" not in st.session_state:
+        st.session_state.np_nombres = np.array([], dtype=str)
+        st.session_state.np_categorias = np.array([], dtype=str)
+        st.session_state.np_precios = np.array([], dtype=float)
+        st.session_state.np_cantidades = np.array([], dtype=int)
+        st.session_state.np_totales = np.array([], dtype=float)
+ 
+    # Formulario
+    col1, col2, col3, col4 = st.columns(4)
+ 
+    with col1:
+        nombre = st.text_input("Nombre del producto")
+ 
+    with col2:
+        categoria = st.selectbox(
+            "Categoría",
+            ("Ropa", "Electrónico", "Alimento", "Hogar", "Deporte", "Higiene", "Mascotas", "Otros"),
+        )
+ 
+    with col3:
+        precio = st.number_input("Precio", min_value=0.0, step=0.01, format="%.2f")
+ 
+    with col4:
+        cantidad = st.number_input("Cantidad", min_value=0, step=1)
+ 
+    if st.button("Agregar registro"):
+        if nombre.strip() == "":
+            st.error("Debes ingresar el nombre del producto.")
+        elif precio <= 0:
+            st.error("El precio debe ser mayor a 0.")
+        elif cantidad <= 0:
+            st.error("La cantidad debe ser mayor a 0.")
+        else:
+            total = precio * cantidad
+ 
+            # Agregar los nuevos valores
+            st.session_state.np_nombres = np.append(st.session_state.np_nombres, nombre)
+            st.session_state.np_categorias = np.append(st.session_state.np_categorias, categoria)
+            st.session_state.np_precios = np.append(st.session_state.np_precios, precio)
+            st.session_state.np_cantidades = np.append(st.session_state.np_cantidades, cantidad)
+            st.session_state.np_totales = np.append(st.session_state.np_totales, total)
+ 
+            st.success(f"Producto '{nombre}' agregado correctamente.")
+ 
+    st.markdown("---")
+ 
+    # Convertir los arrays en DataFrame
+    st.subheader("Registros actualizados")
+ 
+    if len(st.session_state.np_nombres) == 0:
+        st.info("No se han registrado productos.")
+    else:
+        df = pd.DataFrame(
+            {
+                "Producto": st.session_state.np_nombres,
+                "Categoría": st.session_state.np_categorias,
+                "Precio": st.session_state.np_precios,
+                "Cantidad": st.session_state.np_cantidades,
+                "Total": st.session_state.np_totales,
+            }
+        )
+        st.dataframe(df, use_container_width=True)
 
 
 def ejercicio_3():
