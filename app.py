@@ -333,7 +333,7 @@ def ejercicio_4():
         """
         ### Uso de clases desde una librería externa con CRUD
         En esta sección se conecta la clase `EquipoMantenimiento` de `libreria_clases_proyecto1.py`
-        con Streamlit. Para cada equipo se calcula el **MTBF**, **MTTR** y **disponibilidad** a partir 
+        con Streamlit. Para cada equipo se calcula el MTBF, MTTR y disponibilidad a partir 
         de sus horas de operación, número de fallas y horas de reparación.
         """
     )
