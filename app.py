@@ -40,15 +40,15 @@ def home():
     st.markdown("---")
  
     st.subheader("Tecnologías Utilizadas")
-    st.markdown(
+   st.markdown(
         """
         - Python
         - Streamlit
         - GitHub
         - Librerías: Pandas, Numpy
         - Programación orientada a objetos
+        """
     )
-
 
 def ejercicio_1():
     st.title("Ejercicio 1")
