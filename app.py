@@ -338,7 +338,7 @@ def ejercicio_4():
         """
     )
  
-       st.markdown("---")
+    st.markdown("---")
  
     if "equipos" not in st.session_state:
         st.session_state.equipos = []  # Lista de diccionarios
