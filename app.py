@@ -338,12 +338,19 @@ def ejercicio_4():
         """
     )
  
-    st.markdown("---")
+       st.markdown("---")
  
     if "equipos" not in st.session_state:
-        st.session_state.equipos = []  # Lista de dicts
+        st.session_state.equipos = []  # Lista de diccionarios
     if "siguiente_id" not in st.session_state:
         st.session_state.siguiente_id = 1
+    if "mensaje_exito_4" not in st.session_state:
+        st.session_state.mensaje_exito_4 = None
+ 
+    # Mostrar el mensaje de éxito anterior
+    if st.session_state.mensaje_exito_4:
+        st.success(st.session_state.mensaje_exito_4)
+        st.session_state.mensaje_exito_4 = None
  
     def registrar_equipo(nombre, horas_operacion, numero_fallas, horas_reparacion):
         equipo = EquipoMantenimiento(nombre, horas_operacion, numero_fallas, horas_reparacion)
@@ -403,7 +410,7 @@ def ejercicio_4():
         st.subheader("Equipos registrados")
  
         if len(st.session_state.equipos) == 0:
-            st.info("No hay equipos registrados.")
+            st.info("Aún no hay equipos registrados.")
         else:
             df_equipos = pd.DataFrame(st.session_state.equipos)
             st.dataframe(df_equipos, use_container_width=True)
@@ -413,7 +420,7 @@ def ejercicio_4():
         st.subheader("Actualizar equipo")
  
         if len(st.session_state.equipos) == 0:
-            st.info("No hay equipos registrados.")
+            st.info("Aún no hay equipos registrados.")
         else:
             opciones = {
                 f"{e['id']} - {e['nombre_equipo']}": e["id"] for e in st.session_state.equipos
@@ -473,7 +480,8 @@ def ejercicio_4():
                         equipo_actual["mttr_h"] = resumen["mttr_h"]
                         equipo_actual["disponibilidad_pct"] = resumen["disponibilidad_pct"]
  
-                        st.success(f"Equipo '{nombre_u}' actualizado correctamente.")
+                        st.session_state.mensaje_exito_4 = f"Equipo '{nombre_u}' actualizado correctamente."
+                        st.rerun()
                     except ValueError as e:
                         st.error(f"Error en los datos ingresados: {e}")
  
@@ -482,7 +490,7 @@ def ejercicio_4():
         st.subheader("Eliminar equipo")
  
         if len(st.session_state.equipos) == 0:
-            st.info("No hay equipos registrados.")
+            st.info("Aún no hay equipos registrados.")
         else:
             opciones_del = {
                 f"{e['id']} - {e['nombre_equipo']}": e["id"] for e in st.session_state.equipos
@@ -496,8 +504,8 @@ def ejercicio_4():
                 st.session_state.equipos = [
                     e for e in st.session_state.equipos if e["id"] != id_a_eliminar
                 ]
-                st.success("Equipo eliminado correctamente.")
-
+                st.session_state.mensaje_exito_4 = "Equipo eliminado correctamente."
+                st.rerun()
 
 # Menú lateral
 st.sidebar.title("Menú")
