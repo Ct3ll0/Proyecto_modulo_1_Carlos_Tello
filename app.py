@@ -205,7 +205,123 @@ def ejercicio_2():
 
 def ejercicio_3():
     st.title("Ejercicio 3")
-    st.write("Contenido del Ejercicio 3.")
+ 
+    st.markdown(
+        """
+        ### Uso de funciones desde una librería externa
+        En esta sección se conecta funciones de la librería `libreria_funciones_proyecto1.py`
+        con la interfaz de Streamlit. Se selecciona dos funciones del área de
+        Mantenimiento, que se relacionan con la gestión de flota:
+ 
+        - Indicadores de Mantenimiento: calcula MTBF, MTTR y disponibilidad.
+        - OEE: calcula la Efectividad Global del Equipo.
+        """
+    )
+ 
+    st.markdown("---")
+ 
+    if "historico_mantenimiento" not in st.session_state:
+        st.session_state.historico_mantenimiento = []
+ 
+    # Selector
+    funcion = st.selectbox(
+        "Selecciona la función a ejecutar",
+        (
+            "Indicadores de Mantenimiento (MTBF, MTTR, Disponibilidad)",
+            "OEE (Efectividad Global del Equipo)",
+        ),
+    )
+ 
+    st.markdown("#### Parámetros")
+ 
+    if funcion == "Indicadores de Mantenimiento (MTBF, MTTR, Disponibilidad)":
+        col1, col2, col3 = st.columns(3)
+ 
+        with col1:
+            tiempo_operacion_h = st.number_input(
+                "Tiempo de operación (horas)", min_value=0.0, step=1.0, format="%.2f"
+            )
+ 
+        with col2:
+            numero_fallas = st.number_input("Número de fallas", min_value=0, step=1)
+ 
+        with col3:
+            tiempo_reparacion_total_h = st.number_input(
+                "Tiempo total de reparación (horas)", min_value=0.0, step=1.0, format="%.2f"
+            )
+ 
+        if st.button("Calcular"):
+            try:
+                resultado = calcular_indicadores_mantenimiento(
+                    tiempo_operacion_h, numero_fallas, tiempo_reparacion_total_h
+                )
+ 
+                st.write("**Resultado:**")
+                m1, m2, m3 = st.columns(3)
+                m1.metric("MTBF (h)", resultado["mtbf_h"])
+                m2.metric("MTTR (h)", resultado["mttr_h"])
+                m3.metric("Disponibilidad", f"{resultado['disponibilidad_pct']}%")
+ 
+                st.session_state.historico_mantenimiento.append(
+                    {
+                        "Función": "Indicadores de Mantenimiento",
+                        "Tiempo Operación (h)": tiempo_operacion_h,
+                        "N° Fallas": numero_fallas,
+                        "Tiempo Reparación (h)": tiempo_reparacion_total_h,
+                        "MTBF (h)": resultado["mtbf_h"],
+                        "MTTR (h)": resultado["mttr_h"],
+                        "Disponibilidad (%)": resultado["disponibilidad_pct"],
+                    }
+                )
+            except ValueError as e:
+                st.error(f"Error en los datos ingresados: {e}")
+ 
+    else:
+        col1, col2, col3 = st.columns(3)
+ 
+        with col1:
+            disponibilidad_pct = st.number_input(
+                "Disponibilidad (%)", min_value=0.0, max_value=100.0, step=1.0, format="%.2f"
+            )
+ 
+        with col2:
+            rendimiento_pct = st.number_input(
+                "Rendimiento (%)", min_value=0.0, max_value=100.0, step=1.0, format="%.2f"
+            )
+ 
+        with col3:
+            calidad_pct = st.number_input(
+                "Calidad (%)", min_value=0.0, max_value=100.0, step=1.0, format="%.2f"
+            )
+ 
+        if st.button("Calcular"):
+            try:
+                resultado = calcular_oee(disponibilidad_pct, rendimiento_pct, calidad_pct)
+ 
+                st.write("**Resultado:**")
+                st.metric("OEE", f"{resultado['oee_pct']}%")
+ 
+                st.session_state.historico_mantenimiento.append(
+                    {
+                        "Función": "OEE",
+                        "Disponibilidad (%)": disponibilidad_pct,
+                        "Rendimiento (%)": rendimiento_pct,
+                        "Calidad (%)": calidad_pct,
+                        "OEE (%)": resultado["oee_pct"],
+                    }
+                )
+            except ValueError as e:
+                st.error(f"Error en los datos ingresados: {e}")
+ 
+    st.markdown("---")
+ 
+    st.subheader("Histórico de resultados")
+ 
+    if len(st.session_state.historico_mantenimiento) == 0:
+        st.info("No se han calculado resultados.")
+    else:
+        df_historico = pd.DataFrame(st.session_state.historico_mantenimiento)
+        st.dataframe(df_historico, use_container_width=True)
 
 
 def ejercicio_4():
