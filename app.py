@@ -51,7 +51,73 @@ def home():
 
 def ejercicio_1():
     st.title("Ejercicio 1")
-    st.write("Contenido del Ejercicio 1.")
+ 
+    st.markdown(
+        """
+        ### Flujo de caja con listas
+        En este ejercicio se registran movimientos financieros (**ingresos** y **gastos**)
+        en una lista. Al final se calcula el total de ingresos, el total de gastos,
+        el saldo final y si el flujo de caja está **a favor** o **en contra**.
+        """
+    )
+ 
+    st.markdown("---")
+ 
+    # Inicializar la lista de movimientos en el estado de la sesión
+    if "movimientos" not in st.session_state:
+        st.session_state.movimientos = []
+ 
+    # Widgets para ingresar un nuevo movimiento
+    col1, col2, col3 = st.columns(3)
+ 
+    with col1:
+        concepto = st.text_input("Concepto")
+ 
+    with col2:
+        tipo = st.selectbox("Tipo de movimiento", ("Ingreso", "Gasto"))
+ 
+    with col3:
+        valor = st.number_input("Valor", min_value=0.0, step=0.01, format="%.2f")
+ 
+    if st.button("Agregar movimiento"):
+        if concepto.strip() == "":
+            st.error("Debes ingresar un concepto antes de agregar el movimiento.")
+        elif valor <= 0:
+            st.error("El valor debe ser mayor a 0.")
+        else:
+            st.session_state.movimientos.append(
+                {"Concepto": concepto, "Tipo": tipo, "Valor": valor}
+            )
+            st.success(f"Movimiento '{concepto}' agregado correctamente.")
+ 
+    st.markdown("---")
+ 
+    # Mostrar la tabla de movimientos
+    st.subheader("Movimientos registrados")
+ 
+    if len(st.session_state.movimientos) == 0:
+        st.info("Aún no se han registrado movimientos.")
+    else:
+        df = pd.DataFrame(st.session_state.movimientos)
+        st.dataframe(df, use_container_width=True)
+ 
+        # Cálculo de totales
+        total_ingresos = df.loc[df["Tipo"] == "Ingreso", "Valor"].sum()
+        total_gastos = df.loc[df["Tipo"] == "Gasto", "Valor"].sum()
+        saldo_final = total_ingresos - total_gastos
+ 
+        st.markdown("---")
+        st.subheader("Resultado del flujo de caja")
+ 
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Total Ingresos", f"S/ {total_ingresos:.2f}")
+        m2.metric("Total Gastos", f"S/ {total_gastos:.2f}")
+        m3.metric("Saldo Final", f"S/ {saldo_final:.2f}")
+ 
+        if saldo_final >= 0:
+            st.success(f"El flujo de caja está A FAVOR con S/ {saldo_final:.2f}")
+        else:
+            st.error(f"El flujo de caja está EN CONTRA con S/ {saldo_final:.2f}")
 
 
 def ejercicio_2():
