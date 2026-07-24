@@ -34,7 +34,8 @@ def home():
  
     st.subheader("Descripción del proyecto")
     st.write(
-        "Breve descripción del proyecto: esta aplicación contiene 4 secciones donde se aplican conceptos fundamentales de estructura de datos, control de flujo, funciones, programación funcional y programación orientada a objetos "
+        "Breve descripción del proyecto: esta aplicación contiene 4 secciones donde se aplican conceptos fundamentales de estructura de datos,
+        control de flujo, funciones, programación funcional y programación orientada a objetos "
     )
  
     st.markdown("---")
@@ -56,19 +57,19 @@ def ejercicio_1():
     st.markdown(
         """
         ### Flujo de caja con listas
-        En este ejercicio se registran movimientos financieros (**ingresos** y **gastos**)
-        en una lista. Al final se calcula el total de ingresos, el total de gastos,
-        el saldo final y si el flujo de caja está **a favor** o **en contra**.
+        En esta sección se registran movimientos financieros (ingresos y gastos)
+        y se muestran en una lista. Finalmente, se calcula y se muestra el total de ingresos, el total de gastos,
+        el saldo final y se indica si el flujo de caja está a favor o en contra.
         """
     )
  
     st.markdown("---")
  
-    # Inicializar la lista de movimientos en el estado de la sesión
+    # Inicializar lista de movimientos
     if "movimientos" not in st.session_state:
         st.session_state.movimientos = []
  
-    # Widgets para ingresar un nuevo movimiento
+    # Widgets
     col1, col2, col3 = st.columns(3)
  
     with col1:
@@ -82,7 +83,7 @@ def ejercicio_1():
  
     if st.button("Agregar movimiento"):
         if concepto.strip() == "":
-            st.error("Debes ingresar un concepto antes de agregar el movimiento.")
+            st.error("Debes ingresar un concepto")
         elif valor <= 0:
             st.error("El valor debe ser mayor a 0.")
         else:
@@ -93,11 +94,11 @@ def ejercicio_1():
  
     st.markdown("---")
  
-    # Mostrar la tabla de movimientos
+    # Tabla de movimientos
     st.subheader("Movimientos registrados")
  
     if len(st.session_state.movimientos) == 0:
-        st.info("Aún no se han registrado movimientos.")
+        st.info("No se han registrado movimientos.")
     else:
         df = pd.DataFrame(st.session_state.movimientos)
         st.dataframe(df, use_container_width=True)
@@ -108,7 +109,7 @@ def ejercicio_1():
         saldo_final = total_ingresos - total_gastos
  
         st.markdown("---")
-        st.subheader("Resultado del flujo de caja")
+        st.subheader("Flujo de caja")
  
         m1, m2, m3 = st.columns(3)
         m1.metric("Total Ingresos", f"S/ {total_ingresos:.2f}")
@@ -116,9 +117,9 @@ def ejercicio_1():
         m3.metric("Saldo Final", f"S/ {saldo_final:.2f}")
  
         if saldo_final >= 0:
-            st.success(f"El flujo de caja está A FAVOR con S/ {saldo_final:.2f}")
+            st.success(f"El flujo de caja está **a favor** con S/ {saldo_final:.2f}")
         else:
-            st.error(f"El flujo de caja está EN CONTRA con S/ {saldo_final:.2f}")
+            st.error(f"El flujo de caja está **en contra** con S/ {saldo_final:.2f}")
 
 
 def ejercicio_2():
