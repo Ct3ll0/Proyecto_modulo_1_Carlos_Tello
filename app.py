@@ -40,7 +40,7 @@ def home():
     st.markdown("---")
  
     st.subheader("Tecnologías Utilizadas")
-   st.markdown(
+    st.markdown(
         """
         - Python
         - Streamlit
