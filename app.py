@@ -4,7 +4,7 @@ st.set_page_config(page_title="Proyecto 1 DMC", layout="wide")
 
 
 def home():
-    col1, col2 = st.columns([1, 3])
+    col1, col2 = st.columns([1, 3],vertical_alignment="center")
  
     with col1:
         st.image("logodmc.png", width=150)
